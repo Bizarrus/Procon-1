@@ -2006,7 +2006,7 @@ namespace PRoCon.Core.Remote {
                     }
                 }
             }
-            catch (Exception e) {
+            catch (Exception) {
             }
         }
 
@@ -2033,7 +2033,7 @@ namespace PRoCon.Core.Remote {
                     }
                 }
             }
-            catch (Exception e) {
+            catch (Exception) {
             }
         }
 
@@ -2322,7 +2322,7 @@ namespace PRoCon.Core.Remote {
                 }
             }
             else {
-                int i = 0;
+                //int i = 0;
             }
         }
 

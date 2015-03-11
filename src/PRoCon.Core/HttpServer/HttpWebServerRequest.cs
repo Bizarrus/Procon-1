@@ -127,7 +127,7 @@ namespace PRoCon.Core.HttpServer {
                     Shutdown();
                 }
             }
-            catch (Exception e) {
+            catch (Exception){
             }
         }
 

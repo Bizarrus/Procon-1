@@ -185,8 +185,8 @@ namespace PRoCon.Core {
 
                 this.m_wrRequest.Headers.Add(System.Net.HttpRequestHeader.AcceptEncoding, "gzip");
                 this.m_wrRequest.Proxy = null;
-            }
-            catch (Exception e) { }
+            } catch(Exception) {
+			}
 
             if (this.m_wrRequest != null) {
                 IAsyncResult arResult = this.m_wrRequest.BeginGetResponse(new AsyncCallback(this.ResponseCallback), this);
