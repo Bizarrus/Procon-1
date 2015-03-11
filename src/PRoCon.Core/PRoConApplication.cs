@@ -775,7 +775,10 @@ namespace PRoCon.Core {
 
                         stwConfig.WriteLine("procon.private.options.enablePluginDebugging {0}", this.OptionsSettings.EnablePluginDebugging);
 
-                        foreach (PRoConClient prcClient in this.Connections) {
+						stwConfig.WriteLine("procon.private.options.enableUnicode {0}", this.OptionsSettings.EnableUnicode);
+						Packet.UsingUnicode = this.OptionsSettings.EnableUnicode;
+						
+						foreach(PRoConClient prcClient in this.Connections) {
 
                             string strAddServerCommand = String.Format("procon.private.servers.add \"{0}\" {1}", prcClient.HostName, prcClient.Port);
 
@@ -1389,6 +1392,15 @@ namespace PRoCon.Core {
                     this.OptionsSettings.EnablePluginDebugging = blEnabled;
                 }
             }
+			else if(lstWords.Count >= 2 && String.Compare(lstWords[0], "procon.private.options.enableUnicode", true) == 0 && objSender == this) {
+				bool blEnabled = false;
+
+				if(bool.TryParse(lstWords[1], out blEnabled) == true) {
+					this.OptionsSettings.EnableUnicode = blEnabled;
+				}
+
+				Packet.UsingUnicode = blEnabled;
+			}
             else if (lstWords.Count >= 3 && String.Compare(lstWords[0], "procon.protected.notification.write", true) == 0 && objSender is PRoConClient)
             {
 

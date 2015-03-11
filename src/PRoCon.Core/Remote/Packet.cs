@@ -25,6 +25,7 @@ using System.IO.Compression;
 
 namespace PRoCon.Core.Remote {
     public class Packet : ICloneable {
+		public static bool UsingUnicode = true;
 
         public static readonly int PacketHeaderSize = 12;
         
@@ -181,14 +182,21 @@ namespace PRoCon.Core.Remote {
                     strWord = strWord.Substring(0, UInt16.MaxValue - 1);
                 }
 
-				Encoding enc = Encoding.UTF8;
-				byte[] byteWord = enc.GetBytes(strWord + Convert.ToChar(0x00));
-				byte[] appendEncodedWords = new byte[encodedWords.Length + byteWord.Length + 5];
+				byte[] appendEncodedWords;
 
-                encodedWords.CopyTo(appendEncodedWords, 0);
-
-				BitConverter.GetBytes(byteWord.Length).CopyTo(appendEncodedWords, encodedWords.Length);
-                byteWord.CopyTo(appendEncodedWords, encodedWords.Length + 4);
+				if(UsingUnicode) {
+					Encoding enc = Encoding.UTF8;
+					byte[] byteWord = enc.GetBytes(strWord + Convert.ToChar(0x00));
+					appendEncodedWords = new byte[encodedWords.Length + byteWord.Length + 5];
+					encodedWords.CopyTo(appendEncodedWords, 0);
+					BitConverter.GetBytes(byteWord.Length).CopyTo(appendEncodedWords, encodedWords.Length);
+					byteWord.CopyTo(appendEncodedWords, encodedWords.Length + 4);
+				} else {
+					appendEncodedWords = new byte[encodedWords.Length + strWord.Length + 5];
+					encodedWords.CopyTo(appendEncodedWords, 0);
+					BitConverter.GetBytes(strWord.Length).CopyTo(appendEncodedWords, encodedWords.Length);
+					Encoding.GetEncoding(1252).GetBytes(strWord + Convert.ToChar(0x00)).CopyTo(appendEncodedWords, encodedWords.Length + 4);
+				}
 
                 encodedWords = appendEncodedWords;
             }
@@ -224,8 +232,14 @@ namespace PRoCon.Core.Remote {
 
             for (UInt32 ui32WordCount = 0; ui32WordCount < ui32Words; ui32WordCount++) {
                 UInt32 ui32WordLength = BitConverter.ToUInt32(rawPacket, Packet.PacketHeaderSize + iWordOffset);
+				int offsetStart = Packet.PacketHeaderSize + iWordOffset + 4;
+				int offsetWord = (int) ui32WordLength;
 
-                this.Words.Add(Encoding.UTF8.GetString(rawPacket, Packet.PacketHeaderSize + iWordOffset + 4, (int)ui32WordLength));
+				if(UsingUnicode) {
+					this.Words.Add(Encoding.UTF8.GetString(rawPacket, offsetStart, offsetWord));
+				} else {
+					this.Words.Add(Encoding.GetEncoding(1252).GetString(rawPacket, offsetStart, offsetWord));
+				}
 
                 iWordOffset += Convert.ToInt32(ui32WordLength) + 5; // WordLength + WordSize + NullByte
             }

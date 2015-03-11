@@ -46,6 +46,8 @@ namespace PRoCon.Core.Options {
 
         public event OptionsEnabledHandler EnablePluginDebuggingChanged;
 
+		public event OptionsEnabledHandler EnableUnicodeChanged;
+
         private bool m_isConsoleLoggingEnabled;
         public bool ConsoleLogging {
             get {
@@ -495,6 +497,21 @@ namespace PRoCon.Core.Options {
             }
         }
 
+		private bool m_isUnicodeEnabled;
+		public bool EnableUnicode {
+			get {
+				return this.m_isUnicodeEnabled;
+			}
+			set {
+				this.m_isUnicodeEnabled = value;
+				this.m_praApplication.SaveMainConfig();
+
+				if(this.EnableUnicodeChanged != null) {
+					this.EnableUnicodeChanged(value);
+				}
+			}
+		}
+
         public PermissionSet PluginPermissions
         {
 
@@ -595,7 +612,9 @@ namespace PRoCon.Core.Options {
             this.PluginMaxRuntime_m = 0;
 
             this.UsePluginOldStyleLoad = false;
-            this.EnablePluginDebugging = false;
+			this.EnablePluginDebugging = false;
+
+			this.EnableUnicode = true;
         }
     }
 }

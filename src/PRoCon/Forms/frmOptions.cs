@@ -947,5 +947,13 @@ namespace PRoCon.Forms {
         private void chkEnablePluginDebugging_CheckedChanged(object sender, EventArgs e) {
             this.m_praApplication.OptionsSettings.EnablePluginDebugging = this.chkEnablePluginDebugging.Checked;
         }
+
+		private void checkBox1_CheckedChanged(object sender, EventArgs e) {
+			this.m_praApplication.OptionsSettings.EnableUnicode = this.chkEnableUnicode.Checked;
+		}
+
+		private void label2_Click(object sender, EventArgs e) {
+
+		}
     }
 }
